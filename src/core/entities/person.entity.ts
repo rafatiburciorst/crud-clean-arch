@@ -1,42 +1,56 @@
-import { BaseEntity, type BaseEntityProps } from './base.entity'
-import type { Optional } from 'src/util/optional'
-import { createId } from '@paralleldrive/cuid2'
+import { Entity } from './entity'
 
-interface PersonProps extends BaseEntityProps {
+interface PersonProps {
   name: string
   age: number
+  email: string
+  password: string
 }
 
-export class PersonEntity extends BaseEntity {
-  private _name: PersonProps['name']
-  private _age: PersonProps['age']
-
-  private constructor(props: PersonProps) {
-    super(props)
+export class PersonEntity extends Entity<PersonProps> {
+  public get name() {
+    return this.props.name
   }
 
-  get name() {
-    return this._name
+  public get email() {
+    return this.props.email
   }
 
-  get age() {
-    return this._age
+  public get age() {
+    return this.props.age
   }
 
-  set name(name: string) {
-    this._name = name
+  public get password() {
+    return this.props.password
   }
 
-  set age(age: number) {
-    this._age = age
+  public set name(value: string) {
+    this.touch()
+    this.props.name = value
   }
 
-  static createNew(props: Optional<PersonProps, 'createAt' | 'id'>) {
-    return new PersonEntity({
-      id: createId(),
-      name: props.name,
-      age: props.age,
-      createAt: new Date(),
-    })
+  public set email(value: string) {
+    this.touch()
+    this.props.email = value
+  }
+
+  public set age(value: number) {
+    this.touch()
+    this.props.age = value
+  }
+
+  public set password(value: string) {
+    this.touch()
+    this.props.password = value
+  }
+
+  public toJSON(): Record<string, unknown> {
+    const { password, ...rest } = this.props
+    return {
+      id: this.id,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      ...rest,
+    }
   }
 }

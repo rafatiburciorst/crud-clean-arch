@@ -1,12 +1,11 @@
 import { char, integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core'
-import { createId } from '@paralleldrive/cuid2'
 
 export const person = pgTable('persons', {
-  id: char('id', { length: 32 })
-    .primaryKey()
-    .$defaultFn(() => createId()),
+  id: char('id', { length: 32 }).primaryKey(),
   name: varchar('name', { length: 100 }).notNull(),
   age: integer('age').notNull(),
-  createdAt: timestamp('created_at', { withTimezone: true }),
+  email: varchar('email', { length: 100 }).notNull(),
+  password: varchar('password', { length: 100 }).notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }),
 })

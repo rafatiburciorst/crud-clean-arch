@@ -1,7 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Client } from 'pg'
-import { env } from 'src/env'
+import { env } from 'src/infrastructure/env'
 import * as schema from './schema'
 
 @Injectable()
@@ -23,12 +23,10 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     await this.client.connect()
-    console.log('Database connected')
   }
 
   async onModuleDestroy() {
     await this.client.end()
-    console.log('Database connection closed')
   }
 
   get database() {
