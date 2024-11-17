@@ -92,13 +92,14 @@ export class AddressEntity extends Entity {
 
   serialize(): Record<string, unknown> {
     return {
-      id: this.id,
+      id: this.id.toString(),
       street: this.street,
       homeNumber: this.homeNumber,
       district: this.district,
       zipNumber: this.zipNumber,
-      personId: this.personId,
-      person: this.person.serialize(),
+      person: {
+        ...this.person.serialize(),
+      },
     }
   }
 }

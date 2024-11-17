@@ -77,7 +77,6 @@ export class PersonEntity extends Entity {
       name: this._name,
       age: this._age,
       email: this._email,
-      password: this._password,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
     }

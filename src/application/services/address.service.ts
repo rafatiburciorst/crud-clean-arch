@@ -14,7 +14,7 @@ export class AddressService {
   ) {}
   async create(payload: CreateAddressDto) {
     const personId = new UniqueEntityID(payload.personId)
-    const person = await this.personExists(personId)
+    const person = await this.personExists(payload.personId)
 
     const adress = AddressEntity.createNew({
       street: payload.street,
@@ -31,7 +31,7 @@ export class AddressService {
     await this.addressRepository.create(adress)
   }
 
-  private async personExists(id: UniqueEntityID) {
+  private async personExists(id: string) {
     return this.personService.findById(id)
   }
 

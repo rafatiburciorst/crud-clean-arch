@@ -19,8 +19,12 @@ export class PersonService {
     return person.serialize()
   }
 
-  async getMany(): Promise<Record<string, unknown>[]> {
-    const persons = await this.personRepository.getMany()
+  async getMany(
+    page: number,
+    limit: number,
+    search: string
+  ): Promise<Record<string, unknown>[]> {
+    const persons = await this.personRepository.getMany(page, limit, search)
     return persons.map(person => {
       const entity = PersonEntity.createFrom({
         id: new UniqueEntityID(person.id),
@@ -35,7 +39,8 @@ export class PersonService {
     })
   }
 
-  async findById(id: UniqueEntityID) {
+  async findById(personId: string) {
+    const id = new UniqueEntityID(personId)
     const person = await this.personRepository.findById(id)
     if (!person) throw new NotFoundException(`person ${id} not found`)
     return person

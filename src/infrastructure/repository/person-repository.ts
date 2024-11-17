@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common'
-import { DrizzleError, eq } from 'drizzle-orm'
+import { DrizzleError, eq, exists } from 'drizzle-orm'
 import type { PersonEntity } from 'src/core/entities/person.entity'
 import type { UniqueEntityID } from 'src/core/value-objects/unique-entity-id'
 import { DrizzleService } from 'src/infrastructure/db'
@@ -33,10 +33,20 @@ export class PersonRepository {
     }
   }
 
-  async getMany() {
+  async getMany(page: number, limit: number, search: string) {
+    console.log({ page, limit, search })
     try {
+      const offset = (page - 1) * limit
       const persons =
-        await this.drizzeService.database.query.personTable.findMany()
+        await this.drizzeService.database.query.personTable.findMany({
+          where: (fields, operators) => {
+            if (search) {
+              return operators.like(fields.name, `%${search}%`)
+            }
+          },
+          offset,
+          limit,
+        })
       return persons
     } catch (error) {
       if (error instanceof DrizzleError) {
