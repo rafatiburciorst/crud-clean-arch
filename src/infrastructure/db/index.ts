@@ -1,5 +1,5 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
-import { drizzle } from 'drizzle-orm/node-postgres'
+import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres'
 import { Client } from 'pg'
 import { env } from 'src/infrastructure/env'
 import * as schema from './schema'
@@ -7,7 +7,7 @@ import * as schema from './schema'
 @Injectable()
 export class DrizzleService implements OnModuleInit, OnModuleDestroy {
   private client: Client
-  private db: ReturnType<typeof drizzle>
+  private db: NodePgDatabase<typeof schema>
 
   constructor() {
     this.client = new Client({
@@ -18,7 +18,7 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
       database: env.DB_NAME,
     })
 
-    this.db = drizzle(this.client, { schema, logger: true })
+    this.db = drizzle(this.client, { schema: schema, logger: true })
   }
 
   async onModuleInit() {

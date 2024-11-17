@@ -1,33 +1,37 @@
 import { UniqueEntityID } from '../value-objects/unique-entity-id'
 
-export abstract class Entity<Props> {
-  public id: UniqueEntityID
-  public createdAt: Date
-  public updatedAt: Date
-  public props: Props
+export interface BaseEntityProps {
+  id: UniqueEntityID
+  createdAt: Date
+  updatedAt: Date
+}
 
-  constructor(
-    props: Props,
-    id?: UniqueEntityID,
-    createdAt?: Date,
-    updatedAt?: Date
-  ) {
-    this.id = id ?? new UniqueEntityID()
-    this.createdAt = createdAt ?? new Date()
-    this.updatedAt = updatedAt ?? new Date()
-    this.props = props
+export abstract class Entity {
+  private readonly _id: UniqueEntityID
+  private readonly _createdAt: Date
+  private _updatedAt: Date
+
+  constructor(data: BaseEntityProps) {
+    this._id = data.id
+    this._createdAt = data.createdAt
+    this._updatedAt = data.updatedAt
   }
 
-  public serialize() {
-    return {
-      id: this.id.toString(),
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt,
-      ...this.props,
-    }
+  abstract serialize(): Record<string, unknown>
+
+  get id() {
+    return this._id
   }
 
-  public touch() {
-    this.updatedAt = new Date()
+  get createdAt() {
+    return this._createdAt
+  }
+
+  get updatedAt() {
+    return this._updatedAt
+  }
+
+  set updatedAt(value: Date) {
+    this._updatedAt = value
   }
 }

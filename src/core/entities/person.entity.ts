@@ -1,56 +1,85 @@
-import { Entity } from './entity'
+import type { Optional } from 'src/util/optional'
+import { Entity, type BaseEntityProps } from './entity'
+import { UniqueEntityID } from '../value-objects/unique-entity-id'
 
-interface PersonProps {
+export interface PersonProps extends BaseEntityProps {
   name: string
   age: number
   email: string
   password: string
 }
 
-export class PersonEntity extends Entity<PersonProps> {
-  public get name() {
-    return this.props.name
+export class PersonEntity extends Entity {
+  private _name: string
+  private _age: number
+  private _email: string
+  private _password: string
+
+  private constructor(data: PersonProps) {
+    super(data)
+    this._name = data.name
+    this._age = data.age
+    this._email = data.email
+    this._password = data.password
   }
 
-  public get email() {
-    return this.props.email
+  static createNew(
+    data: Optional<PersonProps, 'id' | 'createdAt' | 'updatedAt'>,
+    id = new UniqueEntityID()
+  ): PersonEntity {
+    return new PersonEntity({
+      ...data,
+      id,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
   }
 
-  public get age() {
-    return this.props.age
+  static createFrom(data: PersonProps): PersonEntity {
+    return new PersonEntity(data)
   }
 
-  public get password() {
-    return this.props.password
+  get name(): string {
+    return this._name
   }
 
-  public set name(value: string) {
-    this.touch()
-    this.props.name = value
+  set name(value: string) {
+    this._name = value
   }
 
-  public set email(value: string) {
-    this.touch()
-    this.props.email = value
+  get age(): number {
+    return this._age
   }
 
-  public set age(value: number) {
-    this.touch()
-    this.props.age = value
+  set age(value: number) {
+    this._age = value
   }
 
-  public set password(value: string) {
-    this.touch()
-    this.props.password = value
+  get email(): string {
+    return this._email
   }
 
-  public toJSON(): Record<string, unknown> {
-    const { password, ...rest } = this.props
+  set email(value: string) {
+    this._email = value
+  }
+
+  get password(): string {
+    return this._password
+  }
+
+  set password(value: string) {
+    this._password = value
+  }
+
+  serialize(): Record<string, unknown> {
     return {
-      id: this.id,
+      id: this.id.toString(),
+      name: this._name,
+      age: this._age,
+      email: this._email,
+      password: this._password,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-      ...rest,
     }
   }
 }

@@ -4,7 +4,7 @@ import {
   CreatePersonSchema,
   type CreatePersonDto,
 } from '../dto/create-person.dto'
-import { PersonService } from 'src/application/services/person-service'
+import { PersonService } from 'src/application/services/person.service'
 
 @Controller('/persons')
 export class PersonController {
